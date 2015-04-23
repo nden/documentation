@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 from astropy.io import fits
 from astropy.modeling import models
 from gwcs import wcs, selector
+import copy
 
 import miri_ifu_ref_tools
 
@@ -44,7 +45,7 @@ def show(mask, n_regions=3):
     labels=np.arange(n_regions)
     loc= labels
     f = plt.figure()
-    f.set_size_inches(12, 8, forward=True)
+    #f.set_size_inches(12, 8, forward=True)
     plt.imshow(mask, interpolation='nearest', cmap=c, aspect='auto')
     cb = plt.colorbar()
     cb.set_ticks(loc)
@@ -120,32 +121,66 @@ def create_channel_selector(alpha, lam, channel, beta):
 #     return ch1_sel, ch2_sel
 
 #miri-example
-def miri_models():
-    f = fits.open('MIRI_FM_MIRIIFUSHORT_12_SHORT_DISTRORTION_DRAFT.fits')
-    slices = f[1].data
-    #mask=selector.SelectorMask(slices)
-    #x,y=np.mgrid[:1024, :1024]
-    ch1, ch2=miri_ifu_ref_tools.miri_models('MIRI_FM_MIRIIFUSHORT_12_SHORT_DISTRORTION_DRAFT.fits')
-    import copy
-    sel = copy.deepcopy(ch1)
-    sel.update(ch2)
-    f.close()
-    sel1 = {}
-    for i in sel:
-        if i > 100 and i < 200:
-            sel1[i-100] = sel[i]
-        elif i >200:
-            sel1[i-200+21] = sel[i]
+# def miri_models():
+#     f = fits.open('MIRI_FM_MIRIIFUSHORT_12_SHORT_DISTRORTION_DRAFT.fits')
+#     slices = f[1].data
+#     #mask=selector.SelectorMask(slices)
+#     #x,y=np.mgrid[:1024, :1024]
+#     ch1, ch2=miri_ifu_ref_tools.miri_models('MIRI_FM_MIRIIFUSHORT_12_SHORT_DISTRORTION_DRAFT.fits')
+#     import copy
+#     sel = copy.deepcopy(ch1)
+#     sel.update(ch2)
+#     f.close()
+#     sel1 = {}
+#     for i in sel:
+#         if i > 100 and i < 200:
+#             sel1[i-100] = sel[i]
+#         elif i >200:
+#             sel1[i-200+21] = sel[i]
 
-    return sel1    
+#     return sel1    
+
+# def miri_mask():
+#     f = fits.open('MIRI_FM_MIRIIFUSHORT_12_SHORT_DISTRORTION_DRAFT.fits')
+#     slices = f[1].data
+#     sl1 = np.where(slices > 100, slices-100, slices)
+#     sl2 = np.where(sl1>100, sl1-100+21, sl1)
+#     #mask = selector.SelectorMask(sl2)
+#     return sl2
 
 def miri_mask():
-    f = fits.open('MIRI_FM_MIRIIFUSHORT_12_SHORT_DISTRORTION_DRAFT.fits')
-    slices = f[1].data
-    sl1 = np.where(slices > 100, slices-100, slices)
-    sl2 = np.where(sl1>100, sl1-100+21, sl1)
-    mask = selector.SelectorMask(sl2)
-    return mask
+    f = fits.open('MIRI_FM_LW_A_D2C_01.00.00.fits')
+    slices = f[3].data
+    nslices = np.zeros((slices.shape))
+    nslices[:, :500] = slices[:, :500]
+    sl1 = slices[:, 500:]
+    sl2 = np.where(sl1> 0, sl1+12, sl1)
+    #sl2 = np.where(sl1>100, sl1-100+21, sl1)
+    nslices[:,500:] = sl2
+    return nslices
+
+
+def miri_models_test():
+    reg_models3 = miri_ifu_ref_tools.make_channel_models(3)
+    reg_models4 = miri_ifu_ref_tools.make_channel_models(4)
+    reg_models = copy.deepcopy(reg_models3)
+    reg_models.update(reg_models4)
+    return reg_models
+
+def miri_models():
+    reg_models3 = miri_ifu_ref_tools.make_channel_models(3)
+    reg_models4 = miri_ifu_ref_tools.make_channel_models(4)
+    reg_models = {}
+
+    for reg in reg_models3:
+        lam_model, alpha_model, beta_model, _ = reg_models3[reg]
+        model = models.Mapping((0, 1, 0, 0, 1)) | alpha_model & beta_model & lam_model
+        reg_models[reg] = model
+    for reg in reg_models4:
+        lam_model, alpha_model, beta_model, _ = reg_models4[reg]
+        model = models.Mapping((0, 1, 0, 0, 1)) | alpha_model & beta_model & lam_model
+        reg_models[reg] = model
+    return reg_models
 
 
 def create_asdf_ref_files(fname):
@@ -166,3 +201,4 @@ def create_asdf_ref_files(fname):
     fasdf = AsdfFile()
     fasdf.tree = {'model': foc2sky}
     fasdf.write_to('foc2sky.asdf')
+
