@@ -1,5 +1,5 @@
 General Notes
--------------
++++++++++++++
 
 All changes to the repository are made in branches on developer's fork of this rerpository
 and submitted via a pull request (PR).
@@ -15,5 +15,41 @@ Travis tests will run on the repository and PRs performing as a minimum a PEP8 c
 Steps which depend on other steps should have some sanity unit tests if possible as well.
 
 Example Workflow
-----------------
+++++++++++++++++
 
+- Fork the main jwst repository
+- Create a local copy of the repository you just forked  and let it know where the main repository is.
+
+```
+git clone http://github.com/nden/jwst.git
+git remote add jwst http://github.com/jwst/jwst.git
+```
+
+You should be able to look at all remotes now and see somthing like
+
+```
+% git remote -v
+jwst   git://github.com/jwst/jwst.git (fetch)
+jwst   git://github.com/jwst/jwst.git (push)
+origin     git@github.com:your-user-name/jwst.git (fetch)
+origin     git@github.com:your-user-name/jwst.git (push)
+```
+
+The above operations are normally performed once.
+Now start work on a new feature/change by making a separate branch which tracks jwst/master.
+
+First, always update the jwst/master branch to get the latest changes.
+```
+git fetch jwst
+```
+
+Make a new branch ``feature`` off jwst/master.
+
+```
+git checkout -b feature1 jwst/master
+```
+
+You will see a message like
+```
+
+```
