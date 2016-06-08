@@ -53,7 +53,6 @@ You will see a message like
 ```
 Branch feature1 set to track jwst/master
 ```
-
 - Work on this branch until the new feature is ready. 
   Then commit the changes
   ```
