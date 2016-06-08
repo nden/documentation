@@ -51,5 +51,22 @@ git checkout -b feature1 jwst/master
 
 You will see a message like
 ```
-
+Branch feature1 set to track jwst/master
 ```
+
+- Work on this branch until the new feature is ready. 
+  Then commit the changes
+  ```
+  git commit -m "Adding feature 1" file_names_to_commit
+  ```
+  and push to your forked repository
+  ```
+  git push origin feature`
+  ```
+  
+  You can look at the changes online and if everyhting looks good 
+  create a PR againts jwst/master. 
+  
+  - Add relevant labels and milestones and ask for a review.
+  
+  
