@@ -1,23 +1,26 @@
 #ASDF 1.0.0
-#ASDF_STANDARD 1.2.0
+#ASDF_STANDARD 1.3.0
 %YAML 1.1
 %TAG ! tag:stsci.edu:asdf/
 --- !core/asdf-1.1.0
 asdf_library: !core/software-1.0.0 {author: Space Telescope Science Institute, homepage: 'http://github.com/spacetelescope/asdf',
-  name: asdf, version: 2.1.0.dev1388}
+  name: asdf, version: 2.2.0.dev1606}
 history:
   extensions:
   - !core/extension_metadata-1.0.0
     extension_class: asdf.extension.BuiltinExtension
-    software: {name: asdf, version: 2.1.0.dev1388}
+    software: {name: asdf, version: 2.2.0.dev1606}
   - !core/extension_metadata-1.0.0
     extension_class: astropy.io.misc.asdf.extension.AstropyAsdfExtension
-    software: {name: astropy, version: 3.1.dev21795}
+    software: {name: astropy, version: 3.2.dev23222}
+  - !core/extension_metadata-1.0.0
+    extension_class: gwcs.extension.GWCSExtension
+    software: {name: gwcs, version: 0.10.dev395}
 wcs: !<tag:stsci.edu:gwcs/wcs-1.0.0>
   name: ''
   steps:
   - !<tag:stsci.edu:gwcs/step-1.0.0>
-    frame: !wcs/frame-1.1.0
+    frame: !<tag:stsci.edu:gwcs/frame2d-1.0.0>
       axes_names: [x, y]
       name: detector
       unit: [!unit/unit-1.0.0 pixel, !unit/unit-1.0.0 pixel]
